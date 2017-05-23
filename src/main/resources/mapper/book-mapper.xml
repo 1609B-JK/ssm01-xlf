@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >  
+<mapper namespace="com.jk.dao.book.BookDao">
+
+   <insert id="insertBook" parameterType="book">
+        INSERT INTO t_books
+        (t_id, t_name,t_price)
+        VALUES
+        (t_books_seq.nextval, #{bookName},#{bookPrice})
+   </insert>
+
+    <select id="selectBookJsonCount" resultType="int">
+        SELECT count(t_id) from t_books
+    </select>
+    <select id="selectBookList" resultType="book">
+        select t.t_id   as "bookID",
+               t.t_name  as "bookName",
+               t.t_price as "bookPrice"
+        from t_books t
+    </select>
+
+    <select id="selectBookJsonList" parameterType="book" resultType="book">
+        select * from (
+            select a.*, rownum as rn
+            from (select t.t_id    as "bookID",
+                           t.t_name  as "bookName",
+                           t.t_price as "bookPrice"
+                  from t_books t) a where rownum <![CDATA[<=]]> #{endPos}
+		) b where b.rn >= #{startPos}
+    </select>
+   <delete id="deleteBook" parameterType="book">
+        DELETE FROM t_books WHERE t_id = #{bookID}
+   </delete>
+    <select id="selectbookByID" parameterType="book" resultType="book">
+        select t.t_id as "bookID",
+               t.t_name  as "bookName",
+               t.t_price as "bookPrice"
+        from t_books t WHERE t.t_id = #{bookID}
+    </select>
+</mapper>   
